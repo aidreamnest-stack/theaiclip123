@@ -8,25 +8,33 @@ export default function Home() {
             <Hero />
 
             <div className="container mx-auto px-4 space-y-20 mt-12">
-                <WallpaperSection
-                    title="Trending Wallpapers"
-                    type="vertical"
-                    count={10}
-                />
+                <div id="trending">
+                    <WallpaperSection
+                        title="Trending Wallpapers"
+                        type="vertical"
+                        count={10}
+                    />
+                </div>
 
-                <WallpaperSection
-                    title="Newest Wallpapers"
-                    type="vertical"
-                    count={10}
-                />
+                <div id="newest">
+                    <WallpaperSection
+                        title="Newest Wallpapers"
+                        type="vertical"
+                        count={10}
+                    />
+                </div>
 
-                <WallpaperSection
-                    title="Desktop Wallpapers"
-                    type="horizontal"
-                    count={6}
-                />
+                <div id="desktop">
+                    <WallpaperSection
+                        title="Desktop Wallpapers"
+                        type="horizontal"
+                        count={6}
+                    />
+                </div>
 
-                <BlogSection />
+                <div id="blog">
+                    <BlogSection />
+                </div>
             </div>
         </main>
     );

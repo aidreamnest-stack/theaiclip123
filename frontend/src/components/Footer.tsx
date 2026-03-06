@@ -38,10 +38,17 @@ export default function Footer() {
                     <div>
                         <h3 className="mb-6 text-sm font-bold uppercase tracking-wider text-white">Quick Links</h3>
                         <ul className="space-y-4">
-                            {['Home', 'About Us', 'Contact', 'Blog', 'Terms of Service'].map((item) => (
-                                <li key={item}>
-                                    <Link href="#" className="text-sm text-white/60 transition-colors hover:text-blue-400">
-                                        {item}
+                            {[
+                                { name: 'Home', href: '/' },
+                                { name: 'About Us', href: '/about' },
+                                { name: 'Contact', href: '/contact' },
+                                { name: 'Blog', href: '/blogs' },
+                                { name: 'FAQ', href: '/faq' },
+                                { name: 'Terms of Service', href: '/terms' }
+                            ].map((item) => (
+                                <li key={item.name}>
+                                    <Link href={item.href} className="text-sm text-white/60 transition-colors hover:text-blue-400">
+                                        {item.name}
                                     </Link>
                                 </li>
                             ))}
@@ -52,10 +59,15 @@ export default function Footer() {
                     <div>
                         <h3 className="mb-6 text-sm font-bold uppercase tracking-wider text-white">Wallpapers</h3>
                         <ul className="space-y-4">
-                            {['Trending', 'Newest', 'Mobile (9:16)', 'Desktop (16:9)', 'Animated'].map((item) => (
-                                <li key={item}>
-                                    <Link href="#" className="text-sm text-white/60 transition-colors hover:text-blue-400">
-                                        {item}
+                            {[
+                                { name: 'Trending', href: '/#trending' },
+                                { name: 'Newest', href: '/#newest' },
+                                { name: 'Mobile (9:16)', href: '/mobile' },
+                                { name: 'Desktop (16:9)', href: '/desktop' }
+                            ].map((item) => (
+                                <li key={item.name}>
+                                    <Link href={item.href} className="text-sm text-white/60 transition-colors hover:text-blue-400">
+                                        {item.name}
                                     </Link>
                                 </li>
                             ))}
