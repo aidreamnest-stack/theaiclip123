@@ -33,4 +33,3 @@ backend/tmp/
 backend/bin/
 frontend/*.log
 admin panel/*.log
-frontend
