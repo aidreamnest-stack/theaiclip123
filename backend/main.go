@@ -63,6 +63,7 @@ func main() {
 		api.GET("/wallpapers", wallpaperHandler.GetWallpapers)
 		api.GET("/wallpapers/:id", wallpaperHandler.GetWallpaper)
 		api.POST("/wallpapers", wallpaperHandler.CreateWallpaper)
+		api.DELETE("/wallpapers/:id", wallpaperHandler.DeleteWallpaper)
 
 		api.GET("/categories", categoryHandler.GetCategories)
 		api.POST("/categories", categoryHandler.CreateCategory)
@@ -70,6 +71,7 @@ func main() {
 		api.GET("/posts", blogHandler.GetPosts)
 		api.GET("/posts/:slug", blogHandler.GetPost)
 		api.POST("/posts", blogHandler.CreatePost)
+		api.DELETE("/posts/:id", blogHandler.DeletePost)
 	}
 
 	port := os.Getenv("PORT")

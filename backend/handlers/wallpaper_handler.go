@@ -79,3 +79,12 @@ func (h *WallpaperHandler) CreateWallpaper(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, wallpaper)
 }
+
+func (h *WallpaperHandler) DeleteWallpaper(c *gin.Context) {
+	id := c.Param("id")
+	if err := h.DB.Delete(&models.Wallpaper{}, id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete wallpaper"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Wallpaper deleted successfully"})
+}

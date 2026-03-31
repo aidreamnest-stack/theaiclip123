@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
     Plus,
     Search,
@@ -10,13 +11,56 @@ import {
     User
 } from 'lucide-react';
 
-const posts = [
-    { id: '1', title: 'The Future of AI Art Generation', author: 'Admin', date: 'Mar 5, 2026', views: '1,240', status: 'Published' },
-    { id: '2', title: 'Top 10 Vertical Wallpapers for iOS 18', author: 'Admin', date: 'Mar 2, 2026', views: '850', status: 'Published' },
-    { id: '3', title: 'Mastering the AI Prompt Engineering', author: 'Admin', date: 'Feb 28, 2026', views: '2,100', status: 'Draft' },
-];
+interface Post {
+    id: string | number;
+    title: string;
+    author?: string;
+    date?: string;
+    views?: string | number;
+    status?: string;
+    published?: boolean;
+    created_at?: string;
+}
 
 export default function Blogs() {
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        fetchPosts();
+    }, []);
+
+    const fetchPosts = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/posts');
+            const data = await response.json();
+            setPosts(data);
+        } catch (error) {
+            console.error('Failed to fetch posts:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleDelete = async (id: string | number) => {
+        if (!window.confirm('Are you sure you want to delete this article?')) return;
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/posts/${id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                setPosts(posts.filter(post => post.id !== id));
+            } else {
+                alert('Failed to delete post');
+            }
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            alert('An error occurred while deleting');
+        }
+    };
+
     return (
         <div className="space-y-10">
             {/* Header */}
@@ -62,55 +106,68 @@ export default function Blogs() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {posts.map((post) => (
-                            <tr key={post.id} className="hover:bg-white/[0.01] transition-colors group">
-                                <td className="p-5">
-                                    <div className="flex items-center space-x-4">
-                                        <div className="h-10 w-10 bg-blue-600/10 text-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <FileText size={20} />
-                                        </div>
-                                        <div className="font-bold text-white truncate max-w-[200px] md:max-w-xs">{post.title}</div>
-                                    </div>
-                                </td>
-                                <td className="p-5 hidden md:table-cell">
-                                    <div className="flex items-center space-x-2 text-white/60">
-                                        <User size={14} className="text-purple-500" />
-                                        <span className="text-sm font-medium">{post.author}</span>
-                                    </div>
-                                </td>
-                                <td className="p-5 hidden lg:table-cell">
-                                    <div className="flex items-center space-x-2 text-white/40 mb-1">
-                                        <Calendar size={14} />
-                                        <span className="text-xs font-bold">{post.date}</span>
-                                    </div>
-                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${post.status === 'Published' ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'
-                                        }`}>
-                                        {post.status}
-                                    </span>
-                                </td>
-                                <td className="p-5">
-                                    <div className="text-sm font-bold text-white flex items-center space-x-1">
-                                        <Eye size={14} className="text-white/20" />
-                                        <span>{post.views}</span>
-                                    </div>
-                                </td>
-                                <td className="p-5">
-                                    <div className="flex items-center space-x-2">
-                                        <button className="p-2 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white rounded-lg transition-all border-none cursor-pointer">
-                                            <Edit size={18} />
-                                        </button>
-                                        <button className="p-2 bg-white/5 hover:bg-red-500/10 text-white/60 hover:text-red-400 rounded-lg transition-all border-none cursor-pointer">
-                                            <Trash2 size={18} />
-                                        </button>
-                                    </div>
-                                </td>
+                        {loading ? (
+                            <tr>
+                                <td colSpan={5} className="p-10 text-center text-white/20">Loading articles...</td>
                             </tr>
-                        ))}
+                        ) : posts.length === 0 ? (
+                            <tr>
+                                <td colSpan={5} className="p-10 text-center text-white/20">No articles found</td>
+                            </tr>
+                        ) : (
+                            posts.map((post) => (
+                                <tr key={post.id} className="hover:bg-white/[0.01] transition-colors group">
+                                    <td className="p-5">
+                                        <div className="flex items-center space-x-4">
+                                            <div className="h-10 w-10 bg-blue-600/10 text-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <FileText size={20} />
+                                            </div>
+                                            <div className="font-bold text-white truncate max-w-[200px] md:max-w-xs">{post.title}</div>
+                                        </div>
+                                    </td>
+                                    <td className="p-5 hidden md:table-cell">
+                                        <div className="flex items-center space-x-2 text-white/60">
+                                            <User size={14} className="text-purple-500" />
+                                            <span className="text-sm font-medium">{post.author || 'Admin'}</span>
+                                        </div>
+                                    </td>
+                                    <td className="p-5 hidden lg:table-cell">
+                                        <div className="flex items-center space-x-2 text-white/40 mb-1">
+                                            <Calendar size={14} />
+                                            <span className="text-xs font-bold">
+                                                {post.created_at ? new Date(post.created_at).toLocaleDateString() : (post.date || 'N/A')}
+                                            </span>
+                                        </div>
+                                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${post.published !== false ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'
+                                            }`}>
+                                            {post.published !== false ? 'Published' : 'Draft'}
+                                        </span>
+                                    </td>
+                                    <td className="p-5">
+                                        <div className="text-sm font-bold text-white flex items-center space-x-1">
+                                            <Eye size={14} className="text-white/20" />
+                                            <span>{post.views || 0}</span>
+                                        </div>
+                                    </td>
+                                    <td className="p-5">
+                                        <div className="flex items-center space-x-2">
+                                            <button className="p-2 bg-white/5 hover:bg-white/10 text-white/60 hover:text-white rounded-lg transition-all border-none cursor-pointer" title="Edit">
+                                                <Edit size={18} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(post.id)}
+                                                className="p-2 bg-white/5 hover:bg-red-500/10 text-white/60 hover:text-red-400 rounded-lg transition-all border-none cursor-pointer"
+                                                title="Delete"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
-                <div className="p-5 text-center text-white/20 text-xs font-bold uppercase tracking-widest">
-                    End of collection
-                </div>
             </div>
         </div>
     );

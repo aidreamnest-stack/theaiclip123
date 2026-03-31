@@ -74,3 +74,12 @@ func (h *BlogHandler) CreatePost(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, post)
 }
+
+func (h *BlogHandler) DeletePost(c *gin.Context) {
+	id := c.Param("id")
+	if err := h.DB.Delete(&models.BlogPost{}, id).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete post"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Post deleted successfully"})
+}
